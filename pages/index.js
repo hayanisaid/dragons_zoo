@@ -1,8 +1,155 @@
 import Head from 'next/head'
-import Image from 'next/image'
+import React, {useState} from 'react'
 import styles from '../styles/Home.module.css'
 
+const dragonsArr = [
+  {
+    id: 1,
+    name: 'Falkor',
+    favoriteFood: ['banana', 'salad', 'bread'],
+    zone: 'barn'
+  },
+  {
+    id: 2,
+    name: 'St. George & The Dragon',
+    favoriteFood: ['snakes', 'red meat', 'fish'],
+    zone: 'display_area'
+  },
+  {
+    id: 3,
+    name: 'Saphira',
+    favoriteFood: ['cookies', 'chocolate ', 'chips'],
+    zone: 'barn'
+  },
+  {
+    id: 4,
+    name: 'Mushu',
+    favoriteFood: ['potatos', 'beans '],
+    zone: 'display_area'
+  },
+  {
+    id: 5,
+    name: 'Toothless',
+    favoriteFood: ['lamb', 'onions '],
+    zone: 'barn'
+  },
+  {
+    id: 6,
+    favoriteFood: ['celery', 'tomato '],
+    name: 'Fin Fang Foom ',
+    zone: 'flying_zone'
+  },
+  {
+    id: 7,
+    favoriteFood: ['carrots', 'chicken  '],
+    name: 'Draco ',
+    zone: 'barn'
+  },
+  {
+    id: 8,
+    favoriteFood: ['hobbit', 'chicken  '],
+    name: 'Smaug ',
+    zone: 'barn'
+  }
+]
+
 export default function Home() {
+  const [dragons, setDragons] = useState(dragonsArr)
+  const [zones, setZone] = useState(['barn', 'display_area', 'flying_zone'])
+  const [isZoneMenuActive, setZoneMenuActive] = useState(false)
+  const [selectedDragon, setSelectedDragon] = useState(null)
+  const [selectedZone, setSelectedZone] = useState('barn')
+
+  const _moveDragon = (dragon, zone) => {
+    const index = dragons.indexOf(dragon)
+    dragons[index].zone = zone
+    setDragons([...dragons])
+    setZoneMenuActive(false)
+  }
+
+  React.useEffect(() => {}, [dragons])
+
+  const __moveItem = (dragon) => {
+    setSelectedDragon(dragon)
+    setZoneMenuActive(true)
+  }
+
+  const ZoneMenu = () => {
+    return (
+      <div
+        style={{
+          position: 'absolute',
+          right: '50%',
+          left: 'auto',
+          alignSelf: 'center',
+          background: '#fff',
+          boxShadow: '0 0 1px solid #ccc',
+          border: '1px solid #000',
+          borderRadius: 5,
+          height: 150,
+          width: 180,
+          display: isZoneMenuActive ? 'flex' : 'none',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'space-around',
+          maxWidth: 'auto'
+        }}
+      >
+        <div>
+          <span> Move: {selectedDragon ? selectedDragon.name : ''}</span>
+        </div>
+        <span>To:</span>
+        <select
+          value={selectedZone}
+          onChange={(event) => {
+            setSelectedZone(event.target.value)
+          }}
+        >
+          {zones.map((zone) => {
+            return <option value={zone}>{zone}</option>
+          })}
+        </select>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'row'
+          }}
+        >
+          <button
+            onClick={() => setZoneMenuActive(false)}
+            style={{
+              background: '#fff',
+              height: 20,
+              border: 0,
+              borderRadius: 4,
+              color: '#888',
+              cursor: 'pointer'
+            }}
+          >
+            Cancel
+          </button>
+
+          <button
+            onClick={() => _moveDragon(selectedDragon, selectedZone)}
+            style={{
+              background: '#1597E5',
+              height: 20,
+              border: 0,
+              borderRadius: 4,
+              color: '#fff',
+              cursor: 'pointer'
+            }}
+          >
+            Confirm
+          </button>
+        </div>
+      </div>
+    )
+  }
+  const barnDragons = dragons.filter((item) => item.zone === 'barn')
+  const flyingZoneDragons = dragons.filter((item) => item.zone === 'flying_zone')
+  const displayAreaDragons = dragons.filter((item) => item.zone === 'display_area')
+
   return (
     <div className={styles.container}>
       <Head>
@@ -11,59 +158,138 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h2>Documentation &rarr;</h2>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h2>Learn &rarr;</h2>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h2>Examples &rarr;</h2>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h2>Deploy &rarr;</h2>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+      <div>
+        <h1>Dashboard</h1>
+      </div>
+      <ZoneMenu />
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-around'
+        }}
+      >
+        <div
+          style={{
+            background: '#4ef037',
+            minHeight: 350,
+            flex: 1,
+            margin: '1em'
+          }}
         >
-          Powered by{' '}
-          <span className={styles.logo}>
-            <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-          </span>
-        </a>
-      </footer>
+          <h1
+            style={{
+              textAlign: 'center'
+            }}
+          >
+            Barn
+          </h1>
+          <ul>
+            {barnDragons.length === 0 && <span>No dragons in this Area!</span>}
+            {barnDragons.map((dragon, i) => (
+              <div
+                key={`barnDragons_${i}`}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  margin: '1em'
+                }}
+              >
+                <li>{dragon.name}</li>
+                <button
+                  onClick={() => __moveItem(dragon)}
+                  style={{
+                    width: 50
+                  }}
+                >
+                  Move
+                </button>
+              </div>
+            ))}
+          </ul>
+        </div>
+        <div
+          style={{
+            background: '#00b7c2',
+            minHeight: 350,
+            flex: 1,
+            margin: '1em'
+          }}
+        >
+          <h1
+            style={{
+              textAlign: 'center'
+            }}
+          >
+            Flying Zone
+          </h1>
+          <ul>
+            {flyingZoneDragons.length === 0 && <span>No dragons in this Area!</span>}
+            {flyingZoneDragons.map((dragon, i) => (
+              <div
+                key={`flyingZone_${i}`}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  margin: '1em'
+                }}
+              >
+                <li>{dragon.name}</li>
+                <button
+                  onClick={() => __moveItem(dragon)}
+                  style={{
+                    width: 50
+                  }}
+                >
+                  Move
+                </button>
+              </div>
+            ))}
+          </ul>
+        </div>
+        <div
+          style={{
+            background: '#F3950D',
+            minHeight: 350,
+            flex: 1,
+            margin: '1em'
+          }}
+        >
+          <h1
+            style={{
+              textAlign: 'center'
+            }}
+          >
+            Display Area
+          </h1>
+          <ul>
+            {displayAreaDragons.length === 0 && <span>No dragons in this Area!</span>}
+            {displayAreaDragons.map((dragon, i) => (
+              <div
+                key={`display_area_dragons_list${i}`}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  margin: '1em'
+                }}
+              >
+                <li>{dragon.name}</li>
+                <button
+                  onClick={() => __moveItem(dragon)}
+                  style={{
+                    width: 50
+                  }}
+                >
+                  Move
+                </button>
+              </div>
+            ))}
+          </ul>
+        </div>
+      </div>
     </div>
   )
 }
